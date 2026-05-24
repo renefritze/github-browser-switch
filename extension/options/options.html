@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browser Switch – Options</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <img src="../icons/icon48.png" class="brand-logo" alt="" />
+        <span>Browser Switch</span>
+      </div>
+      <nav>
+        <button class="nav-item active" data-panel="rules">Rules</button>
+        <button class="nav-item" data-panel="browsers">Browsers</button>
+        <button class="nav-item" data-panel="native">Native Host</button>
+        <button class="nav-item" data-panel="about">About</button>
+      </nav>
+    </aside>
+
+    <main class="content">
+
+      <!-- ── Rules panel ────────────────────────────────────────────────── -->
+      <section id="panel-rules" class="panel active">
+        <div class="panel-header">
+          <div>
+            <h2>Routing Rules</h2>
+            <p class="subtitle">
+              Rules are evaluated top-to-bottom. The first match wins.
+              Patterns use glob syntax: <code>*</code> matches any characters
+              except <code>/</code>, <code>**</code> matches everything.
+            </p>
+          </div>
+          <button id="add-rule-btn" class="btn-primary">+ Add rule</button>
+        </div>
+
+        <div id="rules-list" class="rules-list">
+          <!-- populated by JS -->
+        </div>
+        <p id="no-rules-msg" class="empty-msg hidden">
+          No rules yet. Click <strong>+ Add rule</strong> to get started.
+        </p>
+
+        <div class="panel-footer">
+          <button id="save-rules-btn" class="btn-primary">Save rules</button>
+          <span id="save-status" class="save-status"></span>
+        </div>
+      </section>
+
+      <!-- ── Browsers panel ─────────────────────────────────────────────── -->
+      <section id="panel-browsers" class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Browser Executables</h2>
+            <p class="subtitle">
+              Configure the path to each browser's executable. Leave blank
+              to use the system default for that browser. The native host
+              uses these paths when opening URLs.
+            </p>
+          </div>
+        </div>
+
+        <div id="browsers-list" class="browsers-list">
+          <!-- populated by JS -->
+        </div>
+
+        <div class="panel-footer">
+          <button id="save-browsers-btn" class="btn-primary">Save</button>
+          <span id="save-browsers-status" class="save-status"></span>
+        </div>
+      </section>
+
+      <!-- ── Native host panel ──────────────────────────────────────────── -->
+      <section id="panel-native" class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Native Messaging Host</h2>
+            <p class="subtitle">
+              Opening links in a different browser requires a small helper
+              program (the <em>native messaging host</em>) installed on your
+              system. Follow the steps below.
+            </p>
+          </div>
+        </div>
+
+        <div class="native-steps">
+          <div class="step">
+            <span class="step-num">1</span>
+            <div>
+              <strong>Download the host</strong>
+              <p>
+                Grab <code>browser_switch_host.py</code> and the
+                <code>com.browserswitch.host.json</code> manifest from the
+                <a href="https://github.com/renefritze/github-browser-switch/tree/main/native-host"
+                   target="_blank">native-host/</a> folder in the repository.
+              </p>
+            </div>
+          </div>
+
+          <div class="step">
+            <span class="step-num">2</span>
+            <div>
+              <strong>Run the installer</strong>
+              <p>
+                Linux / macOS: run <code>install.sh</code> (or
+                <code>install-macos.sh</code>).<br />
+                Windows: run <code>install-windows.ps1</code> in PowerShell.
+              </p>
+              <p class="hint">
+                The installer copies the Python script and registers the native
+                messaging manifest so Chrome can find it.
+              </p>
+            </div>
+          </div>
+
+          <div class="step">
+            <span class="step-num">3</span>
+            <div>
+              <strong>Test the connection</strong>
+              <button id="test-native-btn" class="btn-secondary">Test native host</button>
+              <span id="test-native-result" class="save-status"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── About panel ────────────────────────────────────────────────── -->
+      <section id="panel-about" class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>About Browser Switch</h2>
+          </div>
+        </div>
+        <div class="about-body">
+          <p>
+            <strong>Browser Switch</strong> is an open-source Chromium
+            extension that lets you route links to a different browser
+            (or keep them in the current window) based on URL patterns.
+          </p>
+          <p>
+            Source code:
+            <a href="https://github.com/renefritze/github-browser-switch"
+               target="_blank">
+              github.com/renefritze/github-browser-switch
+            </a>
+          </p>
+          <p>Licensed under the GNU General Public License v2.</p>
+          <dl class="about-dl">
+            <dt>Extension version</dt><dd id="ext-version">—</dd>
+            <dt>Native host ID</dt><dd><code>com.browserswitch.host</code></dd>
+          </dl>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ── Rule editor modal ──────────────────────────────────────────────── -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <h3 id="modal-title">Add rule</h3>
+      <form id="rule-form">
+        <label>
+          Rule name
+          <input type="text" id="rule-name" placeholder="e.g. Work apps" required />
+        </label>
+
+        <label>
+          URL pattern
+          <input type="text" id="rule-pattern"
+                 placeholder="e.g. *.mycompany.com/**" required />
+          <span class="field-hint">
+            Supports <code>*</code>, <code>**</code>, <code>?</code> wildcards.
+            Include the scheme: <code>https://example.com/*</code>
+          </span>
+        </label>
+
+        <label>
+          Action
+          <select id="rule-action">
+            <option value="external">Open in external browser</option>
+            <option value="current">Keep in current browser</option>
+          </select>
+        </label>
+
+        <label id="browser-label">
+          Target browser
+          <select id="rule-browser"></select>
+        </label>
+
+        <label class="checkbox-label">
+          <input type="checkbox" id="rule-enabled" checked />
+          Rule enabled
+        </label>
+
+        <div class="modal-actions">
+          <button type="button" id="modal-cancel" class="btn-secondary">Cancel</button>
+          <button type="submit" class="btn-primary">Save rule</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
