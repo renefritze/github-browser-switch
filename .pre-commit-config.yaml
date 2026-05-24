@@ -1,0 +1,44 @@
+# Pre-commit hook configuration
+# Install hooks : pre-commit install
+# Run manually  : pre-commit run --all-files
+# Update pins   : pre-commit autoupdate
+
+repos:
+  # ── General file hygiene ─────────────────────────────────────────────────────
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+
+  # ── JavaScript & JSON – Biome ────────────────────────────────────────────────
+  # Biome replaces ESLint + Prettier for JS/JSON files.
+  # Pin is managed via additional_dependencies; run `pre-commit autoupdate`
+  # or bump the version string below to upgrade.
+  - repo: local
+    hooks:
+      - id: biome-check
+        name: Biome (JS/JSON lint & format)
+        language: node
+        entry: biome check --write
+        types_or: [javascript, json]
+        additional_dependencies:
+          - "@biomejs/biome@1.9.4"
+        exclude: "package-lock\\.json$"
+
+  # ── Python – ruff ────────────────────────────────────────────────────────────
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.7
+    hooks:
+      - id: ruff           # linter (auto-fix)
+        args: [--fix]
+      - id: ruff-format    # formatter
+
+  # ── Shell scripts – shellcheck ───────────────────────────────────────────────
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
