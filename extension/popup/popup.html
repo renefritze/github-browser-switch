@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browser Switch</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <img src="../icons/icon48.png" class="logo" alt="" />
+    <h1>Browser Switch</h1>
+  </header>
+
+  <section id="current-url-section">
+    <p class="label">Current page</p>
+    <p id="current-url" class="url-text">—</p>
+    <div id="match-result" class="match-badge hidden"></div>
+  </section>
+
+  <section id="error-section" class="hidden">
+    <div class="error-box">
+      <strong>⚠ Last error</strong>
+      <p id="error-msg"></p>
+    </div>
+  </section>
+
+  <footer>
+    <button id="open-options" class="btn-primary">Manage rules</button>
+    <span id="rule-count" class="rule-count"></span>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>

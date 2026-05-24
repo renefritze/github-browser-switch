@@ -1,0 +1,9 @@
+{
+  "name": "com.browserswitch.host",
+  "description": "Browser Switch native messaging host – opens URLs in external browsers",
+  "path": "/usr/local/lib/browserswitch/browser_switch_host.py",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://YOUR_EXTENSION_ID_HERE/"
+  ]
+}
