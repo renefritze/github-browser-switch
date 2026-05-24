@@ -1,0 +1,13 @@
+{
+  "name": "browser-switch",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Chromium extension for conditional link routing",
+  "devDependencies": {
+    "eslint": "^8.57.1"
+  },
+  "scripts": {
+    "lint": "eslint \"extension/**/*.js\"",
+    "test": "node --test extension/__tests__/url-patterns.test.mjs"
+  }
+}

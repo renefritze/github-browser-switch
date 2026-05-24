@@ -20,7 +20,6 @@ Outgoing response:
 """
 
 import json
-import os
 import platform
 import struct
 import subprocess
@@ -35,44 +34,44 @@ SYSTEM = platform.system()  # "Linux", "Darwin", "Windows"
 # which passes a "path" field in the message.
 BROWSER_DEFAULTS: dict[str, dict[str, list[str]]] = {
     "firefox": {
-        "Linux":   ["firefox"],
-        "Darwin":  ["open", "-a", "Firefox"],
+        "Linux": ["firefox"],
+        "Darwin": ["open", "-a", "Firefox"],
         "Windows": [r"C:\Program Files\Mozilla Firefox\firefox.exe"],
     },
     "chrome": {
-        "Linux":   ["google-chrome"],
-        "Darwin":  ["open", "-a", "Google Chrome"],
+        "Linux": ["google-chrome"],
+        "Darwin": ["open", "-a", "Google Chrome"],
         "Windows": [r"C:\Program Files\Google\Chrome\Application\chrome.exe"],
     },
     "chromium": {
-        "Linux":   ["chromium-browser", "chromium"],
-        "Darwin":  ["open", "-a", "Chromium"],
+        "Linux": ["chromium-browser", "chromium"],
+        "Darwin": ["open", "-a", "Chromium"],
         "Windows": [r"C:\Program Files\Chromium\Application\chrome.exe"],
     },
     "edge": {
-        "Linux":   ["microsoft-edge"],
-        "Darwin":  ["open", "-a", "Microsoft Edge"],
+        "Linux": ["microsoft-edge"],
+        "Darwin": ["open", "-a", "Microsoft Edge"],
         "Windows": [
             r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
             r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
         ],
     },
     "safari": {
-        "Darwin":  ["open", "-a", "Safari"],
+        "Darwin": ["open", "-a", "Safari"],
     },
     "brave": {
-        "Linux":   ["brave-browser", "brave"],
-        "Darwin":  ["open", "-a", "Brave Browser"],
+        "Linux": ["brave-browser", "brave"],
+        "Darwin": ["open", "-a", "Brave Browser"],
         "Windows": [r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"],
     },
     "opera": {
-        "Linux":   ["opera"],
-        "Darwin":  ["open", "-a", "Opera"],
+        "Linux": ["opera"],
+        "Darwin": ["open", "-a", "Opera"],
         "Windows": [r"C:\Users\Public\Desktop\Opera.lnk"],
     },
     "vivaldi": {
-        "Linux":   ["vivaldi-stable", "vivaldi"],
-        "Darwin":  ["open", "-a", "Vivaldi"],
+        "Linux": ["vivaldi-stable", "vivaldi"],
+        "Darwin": ["open", "-a", "Vivaldi"],
         "Windows": [r"C:\Users\%USERNAME%\AppData\Local\Vivaldi\Application\vivaldi.exe"],
     },
 }
@@ -106,12 +105,12 @@ def launch_browser(cmd_candidates: list[str], url: str) -> None:
         except FileNotFoundError as e:
             last_err = e
     raise FileNotFoundError(
-        f"None of the candidate executables were found: {cmd_candidates}. "
-        f"Last error: {last_err}"
+        f"None of the candidate executables were found: {cmd_candidates}. Last error: {last_err}"
     )
 
 
 # ── Native messaging I/O ───────────────────────────────────────────────────────
+
 
 def read_message() -> dict | None:
     raw_len = sys.stdin.buffer.read(4)
@@ -131,14 +130,15 @@ def send_message(msg: dict) -> None:
 
 # ── Main loop ──────────────────────────────────────────────────────────────────
 
+
 def main() -> None:
     while True:
         msg = read_message()
         if msg is None:
             break  # extension closed the port
 
-        browser_id  = msg.get("browser", "")
-        url         = msg.get("url", "")
+        browser_id = msg.get("browser", "")
+        url = msg.get("url", "")
         custom_path = msg.get("path")  # optional override from the Browsers page
 
         # Connection test

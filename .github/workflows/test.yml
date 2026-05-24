@@ -1,0 +1,39 @@
+name: Tests
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  # ── JavaScript unit tests (node:test, no extra deps) ─────────────────────────
+  js-tests:
+    name: JS tests (node:test)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run URL pattern tests
+        run: node --test extension/__tests__/url-patterns.test.mjs
+
+  # ── Python unit tests (pytest) ───────────────────────────────────────────────
+  python-tests:
+    name: Python tests (pytest)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pytest
+        run: pip install pytest==8.2.2
+
+      - name: Run native host tests
+        run: pytest native-host/tests/ -v

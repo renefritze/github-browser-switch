@@ -36,13 +36,19 @@ function defaultBrowsers() {
  *   ?   – matches any single character except /
  */
 function patternToRegex(pattern) {
-  // Escape regex special chars, then restore our wildcards
-  let re = pattern
-    .replace(/[.+^${}()|[\]\\]/g, '\\$&')  // escape specials
-    .replace(/\\\*/g, '__STAR__')
-    .replace(/__STAR____STAR__/g, '.*')     // ** → .*
-    .replace(/__STAR__/g, '[^/]*')          // *  → [^/]*
-    .replace(/\?/g, '[^/]');               // ?  → [^/]
+  // Split on wildcard tokens first so they are never passed through
+  // the regex-escape step, then map each segment to its regex equivalent.
+  const re = pattern
+    .split(/(\*\*|\*)/g)
+    .map((segment) => {
+      if (segment === '**') return '.*';       // ** → any chars (including /)
+      if (segment === '*')  return '[^/]*';    // *  → any chars except /
+      // Literal segment: escape regex specials, then handle ?
+      return segment
+        .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+        .replace(/\?/g, '[^/]');              // ?  → any single char except /
+    })
+    .join('');
   return new RegExp('^' + re + '$', 'i');
 }
 

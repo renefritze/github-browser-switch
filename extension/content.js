@@ -28,12 +28,17 @@
   // ─── Pattern matching (mirrors background.js logic) ──────────────────────
 
   function patternToRegex(pattern) {
-    let re = pattern
-      .replace(/[.+^${}()|[\]\\]/g, '\\$&')
-      .replace(/\\\*/g, '__STAR__')
-      .replace(/__STAR____STAR__/g, '.*')
-      .replace(/__STAR__/g, '[^/]*')
-      .replace(/\?/g, '[^/]');
+    // Must stay in sync with background.js – split on wildcards first.
+    const re = pattern
+      .split(/(\*\*|\*)/g)
+      .map((segment) => {
+        if (segment === '**') return '.*';
+        if (segment === '*')  return '[^/]*';
+        return segment
+          .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+          .replace(/\?/g, '[^/]');
+      })
+      .join('');
     return new RegExp('^' + re + '$', 'i');
   }
 
